@@ -1,0 +1,169 @@
+/**************************************************************************
+
+ Student name: Matt Obrigewitsch
+
+ Student number: 200453801
+
+ Assignment number: CS 110 Assignment #2
+
+ Program name: assignment2cs.cpp
+
+ Date written: 2021/03/14
+
+ Problem statement: This C++ program inputs a molecular formula and outputs it's geometry.
+
+ Input: two elements with a space between, and the number of the second element. In the form of O F 2.
+
+ Output: The shape of an atom and it's input
+
+ Main algorithm: input the number of tons
+                 convert the number of tons into the required amounts
+                 print out the converted amounts
+                 print out the conversion factors
+
+ Major variables: centalValence - the # of central valence electrons
+ bondingDomainsA - the bonding domains of the outside atom
+ bondingDomainsB - the bonding domains of the central atom
+ nonbonding electrons - the non-bonding electrons
+ molecular geomety - the form of molecular geometry
+ index - used to sort through the arrays
+ ElementCore - originally an enum, split into 2 arrays to sort for the centralValence based on input
+ ValenceBase - another array used to sort for centralValence
+
+ Program limitations: - hardcoded for only a select few molecular geometrys
+                      - requires a hard formatted input
+
+**************************************************************************/
+
+
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+string UserIn;
+string UserIn2;
+int UserIn3;
+
+string ElementCore[14]{ "Be", "C", "Si", "N", "P", "As", "O", "S", "Se", "F", "Cl", "Br", "I", "Xe" };
+int ValenceBase[14]{ 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8 };
+
+int centralValence;
+int bondingDomainsA;
+int bondingDomainsB;
+int nonbondingElectrons;
+string molecularGeometry = "empty";
+
+int index;
+
+void indexForValence(string x)
+{
+    /* checks if the inputted text is equal to one of the 14 elements accessible, then outputs
+    the corresponding centralValence. */
+    index = 0; \
+        while (index <= 13)
+        {
+            if (x == ElementCore[index])
+            {
+                //cout << ValenceBase[index] << endl;
+                centralValence = ValenceBase[index];
+            }
+            index = index + 1;
+        }
+}
+
+int main()
+{
+    //opening the files for output/input, and renaming inputs
+    ifstream fin;
+    ofstream fout;
+    fin.open("molecules.txt");
+    fout.open("geometricalshapes.txt");
+    fin >> UserIn >> UserIn2 >> UserIn3;
+    bondingDomainsA = UserIn3;
+
+    //runs the index for centralValence
+    indexForValence(UserIn);
+
+    //step one of the equation, with test code for debugging
+    nonbondingElectrons = centralValence - bondingDomainsA;
+    //cout << "nonbondingElectrons step 1: " << nonbondingElectrons << endl;
+
+    //step two of the equation, with test code for debugging
+    bondingDomainsB = nonbondingElectrons / 2;
+    //cout << "bondingDomainsA: " << bondingDomainsA << endl;
+    //cout << "bondingDomainsB: " << bondingDomainsB << endl;
+
+    /*below here lies the series of nested ifs to check for the geometric shape. I could've done it
+    in a similar way to indexing the centralValence, but the outline said explicitly to use nested ifs
+    so it is done this way. One debugging line left in. (but commented out)*/
+    if (bondingDomainsA == 2)
+    {
+        if (bondingDomainsB == 0 || bondingDomainsB == 3)
+        {
+            molecularGeometry = "linear";
+        }
+        if (bondingDomainsB == 1 || bondingDomainsB == 2)
+        {
+            molecularGeometry = "bent";
+        }
+    }
+    else if (bondingDomainsA == 3)
+    {
+        if (bondingDomainsB == 0)
+        {
+            molecularGeometry = "trigonal planar";
+        }
+        if (bondingDomainsB == 1)
+        {
+            molecularGeometry = "trigonal pyramidal";
+        }
+        if (bondingDomainsB == 2)
+        {
+            molecularGeometry = "T-shaped";
+        }
+    }
+    else if (bondingDomainsA == 4)
+    {
+        if (bondingDomainsB == 0)
+        {
+            molecularGeometry = "tetrahedranal";
+        }
+        if (bondingDomainsB == 1)
+        {
+            molecularGeometry = "seesaw";
+        }
+        if (bondingDomainsB == 2)
+        {
+            molecularGeometry = "square planar";
+        }
+    }
+    else if (bondingDomainsA == 5)
+    {
+        if (bondingDomainsB == 0)
+        {
+            molecularGeometry = "trigonal bipyramidal";
+        }
+        if (bondingDomainsB == 1)
+        {
+            molecularGeometry = "sqare pyramidal";
+        }
+    }
+    else if (bondingDomainsA == 6)
+    {
+        if (bondingDomainsB == 0)
+        {
+            molecularGeometry = "octahedral";
+        }
+    }
+    else
+    {
+        molecularGeometry = "unknown";
+    }
+    //cout << molecularGeometry << endl;
+
+    //below is the output and closing for the program.
+    fout << "The geometrical shape of one " << UserIn << " atom surrounded by " << UserIn3 << " " << UserIn2 << " atoms is " << molecularGeometry << "." << endl;
+    fin.close();
+    fout.close();
+    return 1;
+}
